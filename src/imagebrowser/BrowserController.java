@@ -8,6 +8,9 @@ package imagebrowser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,15 +23,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.MediaView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -40,11 +48,12 @@ import javax.swing.JPanel;
  *
  * @author Daniel
  */
-public class BrowserController implements Initializable 
-{   
+public class BrowserController implements Initializable
+{
+
     //Variables:
     @FXML
-    private Button queryBtn, searchBtn;                
+    private Button queryBtn, searchBtn;
     @FXML
     private TextArea queryTxt;
     @FXML
@@ -52,30 +61,70 @@ public class BrowserController implements Initializable
     @FXML
     private AnchorPane anchorBrowser;
     @FXML
-    private Slider threshold;     
+    private Slider threshold;
     @FXML
-    private VBox vBoxGallery;      
-    
-        
+    private ListView galleryList;
+
+    private Documents docs;
     //Methods  
     private Stage fileSearcher;// = new Stage(); 
+
     @Override
-    public void initialize(URL url, ResourceBundle rb) 
+    public void initialize(URL url, ResourceBundle rb)
     {
         queryBtn.setTooltip(new Tooltip("Imagen de referencia"));
         threshold.setTooltip(new Tooltip("Similitud de las imágenes"));
-       // docs = new Documents();               
-    }    
-    
-    
-    private void newImages()
-    {
-        Documents docs = new Documents();
+        docs = new Documents();
+        LinkedList<String> list = newImages();
+        loadImages(list);
     }
-    
+
+    private LinkedList<String> newImages()
+    {
+        try
+        {
+            LinkedList<String> list = docs.getAllImages(Paths.get(System.getProperty("user.dir") + "/src/Images/New").toFile());
+            if (list != null)
+            {
+                for (String s : list)
+                {
+                    System.out.println(s);
+
+                }
+                return list;
+            }
+        }
+        catch (IOException ex)
+        {
+            System.out.println("Error");
+            Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+        return null;
+    }
+
+    private void loadImages(LinkedList<String> list)
+    {
+        if (list != null)
+        {            
+            for (String s : list)
+            {
+                System.out.println(s);
+                Image image = new Image("file:"+s);
+                ImageView view = new ImageView(image);
+                HBox box = new HBox(view);
+                galleryList.getItems().add(box);
+            }
+        }
+        else
+        {
+            System.out.println("Lista nula");
+        }
+    }
+
     @FXML
-    public void handle(ActionEvent event) 
-    {        
+    public void handle(ActionEvent event)
+    {
         fileSearcher = new Stage();
         StackPane root = new StackPane();
         Scene scene = new Scene(root);
@@ -86,35 +135,36 @@ public class BrowserController implements Initializable
         fileChooser.getExtensionFilters().addAll(extFilter, extFilter2);
         fileChooser.setTitle("Elija una imagen");
         File file = fileChooser.showOpenDialog(fileSearcher);
-        if (file != null) 
+        if (file != null)
         {
             queryTxt.setText(file.getPath().toString());
-        }          
-    }
-     @FXML
-        public void queryTxtSetOnDragOver(DragEvent event) 
-        {
-            Dragboard db = event.getDragboard();
-            if (db.hasFiles()) 
-            {
-                event.acceptTransferModes(TransferMode.COPY);
-            } 
-            else 
-            {
-                event.consume();
-            }
         }
-               
+    }
+
     @FXML
-    public void queryTxtSetOnDragDropped(DragEvent event) 
+    public void queryTxtSetOnDragOver(DragEvent event)
+    {
+        Dragboard db = event.getDragboard();
+        if (db.hasFiles())
+        {
+            event.acceptTransferModes(TransferMode.COPY);
+        }
+        else
+        {
+            event.consume();
+        }
+    }
+
+    @FXML
+    public void queryTxtSetOnDragDropped(DragEvent event)
     {
         Dragboard db = event.getDragboard();
         boolean success = false;
-        if (db.hasFiles()) 
+        if (db.hasFiles())
         {
             success = true;
             String filePath = null;
-            for (File file:db.getFiles()) 
+            for (File file : db.getFiles())
             {
                 filePath = file.getAbsolutePath();
                 queryTxt.setText(filePath.toString());
@@ -123,9 +173,5 @@ public class BrowserController implements Initializable
         event.setDropCompleted(success);
         event.consume();
     }
-    
 
-       
-       
-    
 }

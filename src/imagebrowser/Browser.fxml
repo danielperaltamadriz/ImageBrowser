@@ -3,13 +3,13 @@
 <?import java.net.URL?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
 
 <AnchorPane id="AnchorMain" fx:id="anchorMain" prefHeight="651.0" prefWidth="1012.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="imagebrowser.BrowserController">
     <stylesheets>
@@ -43,15 +43,7 @@
       <AnchorPane fx:id="anchorBrowser" layoutX="14.0" layoutY="77.0" prefHeight="563.0" prefWidth="987.0">
          <children>
             <Separator layoutY="-1.0" prefHeight="0.0" prefWidth="987.0" />
-            <VBox fx:id="vBoxGallery" layoutX="14.0" layoutY="14.0" prefHeight="543.0" prefWidth="969.0">
-               <children>
-                  <HBox prefHeight="115.0" prefWidth="969.0" />
-                  <HBox prefHeight="112.0" prefWidth="969.0" />
-                  <HBox prefHeight="119.0" prefWidth="969.0" />
-                  <HBox prefHeight="112.0" prefWidth="969.0" />
-                  <HBox prefHeight="117.0" prefWidth="969.0" />
-               </children>
-            </VBox>
+            <ListView fx:id="galleryList" layoutX="-1.0" layoutY="2.0" prefHeight="563.0" prefWidth="987.0" />
          </children>
       </AnchorPane>
    </children>
