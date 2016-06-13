@@ -80,32 +80,39 @@ public class BrowserController implements Initializable
         }          
     }
      @FXML
-            public void queryTxtSetOnDragOver(DragEvent event) {
-                Dragboard db = event.getDragboard();
-                if (db.hasFiles()) {
-                    event.acceptTransferModes(TransferMode.COPY);
-                } else {
-                    event.consume();
-                }
-            }
-       
-        
-        // Dropping over surface
-       @FXML
-            public void queryTxtSetOnDragDropped(DragEvent event) {
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.hasFiles()) {
-                    success = true;
-                    String filePath = null;
-                    for (File file:db.getFiles()) {
-                        filePath = file.getAbsolutePath();
-                        queryTxt.setText(filePath.toString());
-                    }
-                }
-                event.setDropCompleted(success);
+        public void queryTxtSetOnDragOver(DragEvent event) 
+        {
+            Dragboard db = event.getDragboard();
+            if (db.hasFiles()) 
+            {
+                event.acceptTransferModes(TransferMode.COPY);
+            } 
+            else 
+            {
                 event.consume();
             }
+        }
+               
+    @FXML
+    public void queryTxtSetOnDragDropped(DragEvent event) 
+    {
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasFiles()) 
+        {
+            success = true;
+            String filePath = null;
+            for (File file:db.getFiles()) 
+            {
+                filePath = file.getAbsolutePath();
+                queryTxt.setText(filePath.toString());
+            }
+        }
+        event.setDropCompleted(success);
+        event.consume();
+    }
+    
+    
        
        
     
