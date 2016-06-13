@@ -6,8 +6,11 @@
 package imagebrowser;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,7 +41,8 @@ import javax.swing.JPanel;
  * @author Daniel
  */
 public class BrowserController implements Initializable 
-{        
+{   
+    //Variables:
     @FXML
     private Button queryBtn, searchBtn;                
     @FXML
@@ -50,17 +54,25 @@ public class BrowserController implements Initializable
     @FXML
     private Slider threshold;     
     @FXML
-    private VBox vBoxGallery;
+    private VBox vBoxGallery;      
     
-    
-      
+        
+    //Methods  
     private Stage fileSearcher;// = new Stage(); 
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
         queryBtn.setTooltip(new Tooltip("Imagen de referencia"));
         threshold.setTooltip(new Tooltip("Similitud de las imágenes"));
+       // docs = new Documents();               
     }    
+    
+    
+    private void newImages()
+    {
+        Documents docs = new Documents();
+    }
+    
     @FXML
     public void handle(ActionEvent event) 
     {        
@@ -112,7 +124,7 @@ public class BrowserController implements Initializable
         event.consume();
     }
     
-    
+
        
        
     
