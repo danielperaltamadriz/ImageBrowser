@@ -30,6 +30,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -37,6 +38,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -72,6 +74,15 @@ public class BrowserController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle rb)
     {
+        Images index = new Images();
+        try
+        {
+            index.createIndex();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         queryBtn.setTooltip(new Tooltip("Imagen de referencia"));
         threshold.setTooltip(new Tooltip("Similitud de las imágenes"));
         docs = new Documents();
@@ -83,13 +94,12 @@ public class BrowserController implements Initializable
     {
         try
         {
-            LinkedList<String> list = docs.getAllImages(Paths.get(System.getProperty("user.dir") + "/src/Images/New").toFile());
+            LinkedList<String> list = docs.getAllImages(Paths.get(System.getProperty("user.dir") + "/src/Images/Added").toFile());
             if (list != null)
             {
                 for (String s : list)
                 {
                     System.out.println(s);
-
                 }
                 return list;
             }
@@ -113,7 +123,7 @@ public class BrowserController implements Initializable
                 Image image = new Image("file:"+s);
                 ImageView view = new ImageView(image);
                 HBox box = new HBox(view);
-                galleryList.getItems().add(box);
+                galleryList.getItems().add(box);                               
             }
         }
         else
