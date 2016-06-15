@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -149,6 +150,17 @@ public class BrowserController implements Initializable
         {
             queryTxt.setText(file.getPath().toString());
         }
+    }
+    
+    @FXML
+    public void btnBuscarPressed(ActionEvent event)
+    {
+        System.out.println(queryTxt.getText());
+        Image image = new Image("file:"+queryTxt.getText());
+        Images img = new Images();
+        int[][][] arrayGRB = img.colorHistogram(image);
+        int index[] = img.matrixToArray(arrayGRB);
+       
     }
 
     @FXML

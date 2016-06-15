@@ -33,24 +33,10 @@ public class Images {
         {            
             for (String s : images)
             {
-                Path p = Paths.get(s);
-                int[][][] arrayRGB = new int[4][4][4];               
+                Path p = Paths.get(s);                
                 Image image = new Image("file:"+s);                
-                PixelReader px = image.getPixelReader();
-                for(int i = 0; i < image.getWidth(); i++)
-                {
-                    for(int j = 0; j < image.getHeight(); j++)
-                    {
-                        Color color = px.getColor(i, j);
-                        int red = (int) (color.getRed()*(arrayRGB.length-1));
-                        int blue = (int)(color.getBlue()*(arrayRGB.length-1));
-                        int green = (int)(color.getGreen()*(arrayRGB.length-1));
-                        arrayRGB[red][green][blue]++;
-                    }
-                }
-                
-                File source = new File(s.toString());
-                
+                int[][][] arrayRGB = colorHistogram(image);                                
+                File source = new File(s.toString());                
                 File destination = new File(Paths.get(System.getProperty("user.dir") + "/src/Images/Added/"+p.getFileName().toString()).toString());
                 if (!destination.exists()) 
                 {
@@ -58,8 +44,8 @@ public class Images {
                 }
                 index.add(destination.getName()+":"+Arrays.toString(matrixToArray(arrayRGB))+"$");
             }
-            System.out.println(index.toString());
-            docs.writeFile("index.idx", index.toString());
+            //System.out.println(index.toString());
+            docs.writeFile("index.txt", index.toString());
             System.out.println("Index is done");
         }
         else
@@ -67,6 +53,25 @@ public class Images {
             System.out.println("Lista nula");
         }
         
+    }
+    
+    public int[][][] colorHistogram(Image image)
+    {
+        int[][][] arrayRGB = new int[4][4][4];               
+        
+        PixelReader px = image.getPixelReader();
+        for(int i = 0; i < image.getWidth(); i++)
+        {
+            for(int j = 0; j < image.getHeight(); j++)
+            {
+                Color color = px.getColor(i, j);
+                int red = (int) Math.round(color.getRed()*(arrayRGB.length-1));
+                int blue = (int)Math.round(color.getBlue()*(arrayRGB.length-1));
+                int green = (int)Math.round(color.getGreen()*(arrayRGB.length-1));
+                arrayRGB[red][green][blue]++;
+            }
+        }
+        return arrayRGB;        
     }
     
     public int[] matrixToArray(int[][][] matrix)

@@ -64,6 +64,7 @@ public class Documents
     	if(!file.exists()){
             try
             {
+                System.out.println("Se creó índice");
                 file.createNewFile();
             }
             catch (IOException ex)
@@ -80,6 +81,9 @@ public class Documents
     	BufferedWriter bw = new BufferedWriter(fw);
         for(String s : data)
         {
+            s = s.replace("[", "");
+            s = s.replace("]", "");
+            s = s.replace("$", "");
             bw.write(s);
             bw.newLine();
         }
