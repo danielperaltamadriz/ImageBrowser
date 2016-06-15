@@ -11,8 +11,10 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -160,7 +162,17 @@ public class BrowserController implements Initializable
         Images img = new Images();
         int[][][] arrayGRB = img.colorHistogram(image);
         int index[] = img.matrixToArray(arrayGRB);
-       
+        try
+        {
+            String ss = docs.openFile("index.txt");
+            Hashtable<String, Vector<Integer>> tabla = docs.docToList(ss);
+            System.out.println(tabla.toString());
+            
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @FXML

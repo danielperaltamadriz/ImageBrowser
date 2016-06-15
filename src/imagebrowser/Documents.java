@@ -8,6 +8,7 @@ package imagebrowser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +17,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,10 +60,6 @@ public class Documents
 	try
         {
         File file =new File(name);
-
-    	/* This logic is to create the file if the
-    	 * file is not already present
-    	 */
     	if(!file.exists()){
             try
             {
@@ -71,9 +70,7 @@ public class Documents
             {
                 Logger.getLogger(Documents.class.getName()).log(Level.SEVERE, null, ex);
             }
-    	}
-
-    	//Here true is to append the content to file
+    	}    
         String data[] = datos.split("\\$, ");
         
     	FileWriter fw = new FileWriter(file,true);
@@ -98,14 +95,41 @@ public class Documents
        } 
     }
     
-    public File openFile(String path) throws IOException
+    public String openFile(String path) throws IOException
     {
-        File file = new File(path);
-        if(!file.exists() && !file.isDirectory())
+        String content = new String(Files.readAllBytes(Paths.get(path)));
+        return content;
+    }
+    
+    public Hashtable<String, Vector<Integer>> docToList(String file)
+    {
+        Hashtable<String, Vector<Integer>> retorno = new Hashtable<String, Vector<Integer>>();
+        file = file.replace(" ", "");
+        String[] imagenes = file.split("\n");
+        for(String img : imagenes)
         {
-            file.createNewFile();
+            String[] nombre = img.split(":");
+            String[] valoresStr = nombre[1].split(",");            
+            Vector<Integer> valoresInt = new Vector<Integer>();
+            for(String s : valoresStr)
+            {
+                try
+                {
+                    int i = Integer.parseInt(s);
+                    //System.out.println(s);
+                    //System.out.println(i);
+                    valoresInt.add(i);
+                }
+                catch(NumberFormatException e)
+                {
+                    valoresInt.add(0);
+                }
+            }
+            retorno.put(nombre[0], valoresInt);
         }
-        return file;
+        
+        return retorno;
+        
     }
         
 
