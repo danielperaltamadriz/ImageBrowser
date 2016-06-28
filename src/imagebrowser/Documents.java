@@ -115,9 +115,7 @@ public class Documents
             {
                 try
                 {
-                    int i = Integer.parseInt(s);
-                    //System.out.println(s);
-                    //System.out.println(i);
+                    int i = Integer.parseInt(s);               
                     valoresInt.add(i);
                 }
                 catch(NumberFormatException e)
@@ -126,6 +124,50 @@ public class Documents
                 }
             }
             retorno.put(nombre[0], valoresInt);
+        }
+        
+        return retorno;
+        
+    }
+    public Hashtable<String, Img> docToImg(String file)
+    {
+       
+        Hashtable<String, Img> retorno = new Hashtable<String, Img>();
+        file = file.replace(" ","");
+        file = file.replaceAll("\r", "");
+        String[] imagenes = file.split("\n");
+        for(String img : imagenes)             
+        {
+            Img features = new Img();
+            String[] nombre = img.split(":");
+            String[] valoresStr = nombre[1].split(";");            
+            String[] valores = valoresStr[0].split(","); 
+            
+            features.newArrayR(valores.length);
+            for(int i = 0; i <valores.length; i++)                        
+            {
+                System.out.println(valores[i]);
+                int j = Integer.parseInt(valores[i]);
+                features.setArray1(i, j);
+            }              
+            valores = valoresStr[1].split(",");  
+            features.newArrayB(valores.length);
+            for(int i = 0; i <valores.length; i++)                        
+            {
+                System.out.println(valores[i]);
+                int j = Integer.parseInt(valores[i]);
+                features.setArray2(i, j);
+            }              
+            valores = valoresStr[2].split(",");  
+            features.newArrayG(valores.length);
+            for(int i = 0; i <valores.length; i++)                        
+            {
+                System.out.println(valores[i]);
+                int j = Integer.parseInt(valores[i]);
+                features.setArray3(i, j);
+            }  
+        
+            retorno.put(nombre[0], features);
         }
         
         return retorno;

@@ -14,9 +14,11 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -29,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -36,6 +39,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -160,19 +164,53 @@ public class BrowserController implements Initializable
         System.out.println(queryTxt.getText());
         Image image = new Image("file:"+queryTxt.getText());
         Images img = new Images();
-        int[][][] arrayGRB = img.colorHistogram(image);
-        int index[] = img.matrixToArray(arrayGRB);
+        Img arrayGRB = img.colorHistogram(image);       
         try
         {
             String ss = docs.openFile("index.txt");
-            Hashtable<String, Vector<Integer>> tabla = docs.docToList(ss);
-            System.out.println(tabla.toString());
+            Hashtable<String, Img> tabla = docs.docToImg(ss);
+            double d = 0;
+            Hashtable<String, Double> resultados = new Hashtable<String, Double>();
+            double resultadoComparacion = 0;
+            for(String key : tabla.keySet())
+            {                                
+                Img imagen = tabla.get(key);
+                d = img.compareVectors(arrayGRB.vectorToArray1(), imagen.vectorToArray1());
+                d += img.compareVectors(arrayGRB.vectorToArray2(), imagen.vectorToArray2()); 
+                d += img.compareVectors(arrayGRB.vectorToArray3(), imagen.vectorToArray3()); 
+                resultadoComparacion = d/3;
+                resultados.put(key, resultadoComparacion);               
+            }
+             System.out.println(resultados.toString());
+             showImages(resultados);
+            //System.out.println(tabla.toString());
             
         }
         catch (IOException ex)
         {
             Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private void showImages(Hashtable<String, Double> resultados)
+    {
+        galleryList.getItems().clear();
+        TreeMap<Double, String> show = new TreeMap<Double, String>();
+          for(String key : resultados.keySet())
+          {
+              if((double)resultados.get(key) >= threshold.getValue())
+              {
+                show.put((double)resultados.get(key)*-1, key);
+              }
+          }
+          for(double d : show.keySet())
+          {
+            String key = show.get(d);
+            Image image = new Image("file:D:\\Danielito\\Documents\\ImageBrowser\\src\\Images\\Added\\"+key);
+            ImageView view = new ImageView(image);
+            HBox box = new HBox(view);
+            galleryList.getItems().add(box);
+          }
     }
 
     @FXML
@@ -207,5 +245,19 @@ public class BrowserController implements Initializable
         event.setDropCompleted(success);
         event.consume();
     }
-
+    
+    @FXML
+    public void textChanged(InputMethodEvent e)
+    {
+        
+        if (!queryTxt.getText().isEmpty())
+        {
+            threshold.setDisable(false);
+            searchBtn.setDisable(false);
+        }
+        
+    }    
+   
+    
+  
 }

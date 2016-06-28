@@ -35,14 +35,14 @@ public class Images {
             {
                 Path p = Paths.get(s);                
                 Image image = new Image("file:"+s);                
-                int[][][] arrayRGB = colorHistogram(image);                                
+                Img img = colorHistogram(image);                                
                 File source = new File(s.toString());                
                 File destination = new File(Paths.get(System.getProperty("user.dir") + "/src/Images/Added/"+p.getFileName().toString()).toString());
                 if (!destination.exists()) 
                 {
                     source.renameTo(destination);
                 }
-                index.add(destination.getName()+":"+Arrays.toString(matrixToArray(arrayRGB))+"$");
+                index.add(destination.getName()+":"+img.array1ToString()+";"+img.array2ToString()+";"+img.array3ToString()+"$");
             }
             //System.out.println(index.toString());
             docs.writeFile("index.txt", index.toString());
@@ -55,23 +55,30 @@ public class Images {
         
     }
     
-    public int[][][] colorHistogram(Image image)
+    public Img colorHistogram(Image image)
     {
-        int[][][] arrayRGB = new int[4][4][4];               
-        
+        int length1 = 10;
+        int length2 = 10;
+        int length3 = 10;
+        Img img = new Img();
+        img.newArrayR(length1);
+        img.newArrayB(length2);
+        img.newArrayG(length3);
         PixelReader px = image.getPixelReader();
         for(int i = 0; i < image.getWidth(); i++)
         {
             for(int j = 0; j < image.getHeight(); j++)
             {
                 Color color = px.getColor(i, j);
-                int red = (int) Math.round(color.getRed()*(arrayRGB.length-1));
-                int blue = (int)Math.round(color.getBlue()*(arrayRGB.length-1));
-                int green = (int)Math.round(color.getGreen()*(arrayRGB.length-1));
-                arrayRGB[red][green][blue]++;
+                int red = (int) Math.round((color.getRed())*(length1-1));
+                int blue = (int)Math.round(color.getBlue()*(length2-1));
+                int green = (int)Math.round(color.getGreen()*(length3-1));
+                img.addArray1(red);
+                img.addArray2(blue);
+                img.addArray3(green);
             }
         }
-        return arrayRGB;        
+        return img;        
     }
     
     public int[] matrixToArray(int[][][] matrix)
@@ -98,5 +105,43 @@ public class Images {
     public LinkedList<String> openPictures(File path) throws IOException
     {
         return docs.getAllImages(path);        
+    }
+    
+    public double compareVectors(int[] arrayA, int[] arrayB)
+    {
+        double d = 0;
+        if(arrayA.length != arrayB.length)
+            return -1;
+        long sumatoriaA, sumatoriaB, sumatoriaAB, sumatoriaA2, sumatoriaB2;
+        sumatoriaA = sumatoriaB = sumatoriaAB = sumatoriaA2 = sumatoriaB2 = 0;        
+        final int N = arrayA.length;
+        
+        for(int i = 0; i < arrayA.length; i++)
+        {
+            long A = arrayA[i];
+            long B = arrayB[i];
+            long AB = A * B;
+            long A2 = (long) Math.pow(A, 2);
+            long B2 = (long) Math.pow(B, 2);
+            sumatoriaA += A;
+            sumatoriaB += B;            
+            sumatoriaAB += AB;
+            sumatoriaA2 += A2;
+            sumatoriaB2 += B2;
+        }
+        d = ((N*sumatoriaAB)   - ((sumatoriaA * sumatoriaB)/N));
+        double raiz = Math.sqrt(((N*sumatoriaA2) - (Math.pow(sumatoriaA, 2)/N))*((N*sumatoriaB2) - (Math.pow(sumatoriaB, 2)/N)));
+        printArray(arrayA);
+        printArray(arrayB);
+        return (d/raiz);
+    }
+    public void printArray(int[] array)
+    {
+        for(int i = 0; i < array.length; i++)
+        {
+            System.out.print(array[i]);
+            System.out.print(" ");
+        }
+        System.out.println("");
     }
 }
